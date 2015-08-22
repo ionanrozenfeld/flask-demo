@@ -3,14 +3,21 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Stock plotter</title>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.9.0.min.css" type="text/css" />
+	
+	<script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-0.9.0.min.js"></script>
+	
+	{{scr}}
+	
+	
 	</head>
+		
 	<body>
-		<div>
-  			<h1>The symbol is {{stock_symbol}}</h1>
-			<p>Price {{closing}}</p>
-		</div>
+		<h1>Stock price for {{stock_symbol}} over the last 30 open-market days</h1>
+		
+		{{diiv}}
 		
 		
+		<a href="index">Start again</a>
 	</body>
 </html>
