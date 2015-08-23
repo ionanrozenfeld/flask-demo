@@ -9,7 +9,6 @@ import datetime
 app = Flask(__name__)
 
 app.stock = ''
-app.closing = 0
 app.script = ''
 app.div = ''
 
@@ -30,7 +29,7 @@ def index():
             closing_prices = list(mydata.Close.values)
             
             ##################################################
-            ########Blokeh block##############################
+            ########Bokeh block##############################
         
             # select the tools we want
             TOOLS="pan,wheel_zoom,box_zoom,reset,save"
