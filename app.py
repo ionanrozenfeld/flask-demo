@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, redirect, Markup
 from bokeh.plotting import figure, output_file, show
-import Quandl
-from bokeh.plotting import figure
 from bokeh.models import Range1d
 from bokeh.embed import components
-import datetime
+import time
+import requests
+import simplejson as json
 
 app = Flask(__name__)
 
@@ -19,18 +19,32 @@ def main():
 @app.route('/index',methods=['GET','POST'])
 def index():
     if request.method == 'GET':
-        return render_template('index.html')
-    else:
         app.script = ''
         app.div = ''
-        app.stock = ''
+        app.stock_symbol = ''
+        app.stock_name = ''
+
+        return render_template('index.html')
+    else:
         
-        app.stock = request.form['stock_name']
+        app.stock_symbol = request.form['stock_symbol']
         
-        try:
-            mydata = Quandl.get("WIKI/"+app.stock, rows = 30)
-            dates = mydata.Close.index
-            closing_prices = list(mydata.Close.values)
+        mydata = requests.get("https://www.quandl.com/api/v3/datasets/WIKI/"+app.stock_symbol+".json?rows=30&column_index=4")
+
+        if 'quandl_error' in mydata.json():
+            app.script = ''
+            app.div = ''
+            
+            return render_template('error_page.html', stock_symbol = app.stock_symbol)
+        else:        
+            app.stock_name = mydata.json()['dataset']['name']
+            data = mydata.json()['dataset']['data']        
+            dates, closing_prices = zip(*[(time.strptime(i[0], '%Y-%m-%d'),i[1]) for i in data])
+            
+            f=open("aaa",'w')
+            print >>f, dates
+            print >>f, closing_prices
+            f.close()
             
             ##################################################
             ########Bokeh block##############################
@@ -52,16 +66,9 @@ def index():
 
             return redirect('/graph_page') 
             
-        except:
-            app.script = ''
-            app.div = ''
-            
-            return render_template('error_page.html', stock_symbol = app.stock)
-                    
-
 @app.route('/graph_page')
 def graph_page():
-    return render_template('graph.html',stock_symbol = app.stock, scr = Markup(app.script), diiv = Markup(app.div))
+    return render_template('graph.html',stock_symbol = app.stock_symbol, stock_name = app.stock_name, scr = Markup(app.script), diiv = Markup(app.div))
 
 if __name__ == '__main__':
   app.run()
