@@ -21,6 +21,10 @@ def index():
     if request.method == 'GET':
         return render_template('index.html')
     else:
+        app.script = ''
+        app.div = ''
+        app.stock = ''
+        
         app.stock = request.form['stock_name']
         
         try:
@@ -49,6 +53,9 @@ def index():
             return redirect('/graph_page') 
             
         except:
+            app.script = ''
+            app.div = ''
+            
             return render_template('error_page.html', stock_symbol = app.stock)
                     
 
