@@ -3,6 +3,7 @@ from bokeh.plotting import figure, output_file, show
 from bokeh.models import Range1d
 from bokeh.embed import components
 import time
+import datetime
 import requests
 import simplejson as json
 import numpy as np
@@ -39,17 +40,16 @@ def index():
             
             return render_template('error_page.html', stock_symbol = app.stock_symbol)
         else:        
-            app.stock_name = mydata.json()['dataset']['name']
             data = mydata.json()['dataset']['data']        
             dates, closing_prices = zip(*[(time.strptime(i[0], '%Y-%m-%d'),i[1]) for i in data])
+            dates = [datetime.datetime(i.tm_year,i.tm_mon,i.tm_mday) for i in dates]
             dates = np.array(dates)
             dates = pd.DatetimeIndex(dates)
-            dates = "Date"
-            
-            #f=open("aaa",'w')
-            #print >>f, dates
-            #print >>f, closing_prices
-            #f.close()
+            dates = list(dates)
+            app.stock_name = mydata.json()['dataset']['name']
+            extra_text_index = app.stock_name.find("Prices, Dividends, Splits and Trading Volume")
+            if extra_text_index != -1:
+                app.stock_name = app.stock_name[0:extra_text_index-1]
             
             ##################################################
             ########Bokeh block##############################
@@ -58,8 +58,8 @@ def index():
             TOOLS="pan,wheel_zoom,box_zoom,reset,save"
         
             p1 = figure(tools=TOOLS, plot_width=500, plot_height=500, x_axis_type="datetime", x_axis_label='Date', y_axis_label="Price ($)")
-            p1.line(dates.index, closing_prices,line_width=3)
-            p1.circle(dates.index, closing_prices, fill_color="red", size=6)
+            p1.line(dates, closing_prices,line_width=3)
+            p1.circle(dates, closing_prices, fill_color="red", size=6)
         
             plots = {'Red': p1}
         
