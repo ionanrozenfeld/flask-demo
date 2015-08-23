@@ -13,7 +13,12 @@
 				<p>We could not find stock symbol {{stock_symbol}}.</p>
 				<p>Please check that {{stock_symbol}} is valid and try again.</p>		
 		
-				<a href="index">Main page</a>
+	    		<form id='stock' method='post' action='index' >
+	      		  <p>
+	    			  Try another stock symbol: <input type='text' name='stock_symbol' autocomplete="off"/>
+	    			  <input type='submit' value='Submit' />
+	      		</p>
+	    </form>
 			</body>
 		</html>
 		
