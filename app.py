@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.stock = ''
 app.closing = 0
 app.script = ''
-app.div = Markup("<h1>hola</h1>")
+app.div = ''
 
 @app.route('/')
 def main():
