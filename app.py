@@ -5,6 +5,8 @@ from bokeh.embed import components
 import time
 import requests
 import simplejson as json
+import numpy as np
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -40,11 +42,14 @@ def index():
             app.stock_name = mydata.json()['dataset']['name']
             data = mydata.json()['dataset']['data']        
             dates, closing_prices = zip(*[(time.strptime(i[0], '%Y-%m-%d'),i[1]) for i in data])
+            dates = np.array(dates)
+            dates = pd.DatetimeIndex(dates)
+            dates = "Date"
             
-            f=open("aaa",'w')
-            print >>f, dates
-            print >>f, closing_prices
-            f.close()
+            #f=open("aaa",'w')
+            #print >>f, dates
+            #print >>f, closing_prices
+            #f.close()
             
             ##################################################
             ########Bokeh block##############################
@@ -53,8 +58,8 @@ def index():
             TOOLS="pan,wheel_zoom,box_zoom,reset,save"
         
             p1 = figure(tools=TOOLS, plot_width=500, plot_height=500, x_axis_type="datetime", x_axis_label='Date', y_axis_label="Price ($)")
-            p1.line(dates, closing_prices,line_width=3)
-            p1.circle(dates, closing_prices, fill_color="red", size=6)
+            p1.line(dates.index, closing_prices,line_width=3)
+            p1.circle(dates.index, closing_prices, fill_color="red", size=6)
         
             plots = {'Red': p1}
         
