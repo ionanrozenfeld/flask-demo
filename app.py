@@ -32,20 +32,17 @@ def index():
         
         app.stock_symbol = request.form['stock_symbol']
         
-        mydata = requests.get("https://www.quandl.com/api/v3/datasets/WIKI/"+app.stock_symbol+".json?rows=30&column_index=4")
-
+        mydata = requests.get("https://www.quandl.com/api/v3/datasets/WIKI/"+app.stock_symbol+".json?rows=30&column_index=4") #pulling col=4 (Closing price)
+        
         if 'quandl_error' in mydata.json():
             app.script = ''
             app.div = ''
             
             return render_template('error_page.html', stock_symbol = app.stock_symbol)
-        else:        
-            data = mydata.json()['dataset']['data']        
-            dates, closing_prices = zip(*[(time.strptime(i[0], '%Y-%m-%d'),i[1]) for i in data])
-            dates = [datetime.datetime(i.tm_year,i.tm_mon,i.tm_mday) for i in dates]
-            dates = np.array(dates)
-            dates = pd.DatetimeIndex(dates)
-            dates = list(dates)
+        else:
+            df = pd.DataFrame(mydata.json())
+            dates=pd.to_datetime(np.array(df.ix['data'][0])[:,0])
+            closing_prices = (np.array(df.ix['data'][0])[:,1]).astype(float)
             app.stock_name = mydata.json()['dataset']['name']
             extra_text_index = app.stock_name.find("Prices, Dividends, Splits and Trading Volume")
             if extra_text_index != -1:
