@@ -99,4 +99,4 @@ def graph_page():
     return render_template('graph.html',stock_symbol = app.stock_symbol, closing_price = app.closing_price, volume = app.volume, stock_name = app.stock_name, scr = Markup(app.script), diiv = Markup(app.div))
 
 if __name__ == '__main__':
-  app.run(debug=True)
+  app.run(host='0.0.0.0')
